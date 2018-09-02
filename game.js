@@ -24,6 +24,17 @@ let keys;
 let keySpace;
 let keyEnter;
 
+let downBool = false;
+let forwardBool = false;
+let downForwardBool = false;
+
+let bufferDownBool = false;
+let bufferDownForwardBool = false;
+let bufferForwardBool = false;
+
+let timer;
+let timerDelay = 200;
+
 function preload(){
     this.load.image('downArrow', 'assets/downArrowWhite.png');
     this.load.image('downForwardArrow', 'assets/diagonalRightArrowWhite.png');
@@ -47,7 +58,11 @@ function create(){
 
     
     //SOUNDS
-    hadokenSoundSF2 = this.sound.add('hadokenSound')
+    hadokenSoundSF2 = this.sound.add('hadokenSound');
+
+    //TIMER
+    // timer = this.time.delayedCall(1000, function(){console.log('timer');}, [], this);
+    timer = this.time;
 }
 
 function update(){
@@ -55,17 +70,45 @@ function update(){
 
     if(keySpace.isDown || keyEnter.isDown){
         punchButton.tint = 0xff0000;
-        hadokenSoundSF2.play();
+        //hadokenSoundSF2.play();
+        
     }else{
         punchButton.clearTint();
+    }
+
+    hadokenDetection();
+}
+
+function hadokenDetection() {
+
+    bufferDownBool = downBool ? true : bufferDownBool;
+    bufferDownForwardBool = downForwardBool ? true : bufferDownForwardBool;
+    bufferForwardBool = forwardBool ? true : bufferForwardBool;
+
+    if(bufferDownBool){
+        timer.delayedCall(timerDelay, function(){
+            bufferDownBool = false;
+        }, [], this);
+
+        if(bufferDownForwardBool){
+            timer.delayedCall(timerDelay, function(){
+                bufferDownForwardBool = false;
+            }, [], this);
+
+            if(bufferForwardBool){
+                timer.delayedCall(timerDelay, function(){
+                    bufferForwardBool = false;
+                }, [], this);
+
+                if(keySpace.isDown){
+                    hadokenSoundSF2.play();
+                }
+            }
+        }
     }
 }
 
 function gameDirections(){
-    let downBool = false;
-    let forwardBool = false;
-    let downForwardBool = false;
-    
     //----------
     //KEYBOARD
     //---------
