@@ -28,6 +28,10 @@ let downBool = false;
 let forwardBool = false;
 let downForwardBool = false;
 
+let down1PressBool = false;
+let forward1PressDBool = false;
+let downForward1PressBool = false;
+
 let bufferDownBool = false;
 let bufferDownForwardBool = false;
 let bufferForwardBool = false;
@@ -55,13 +59,11 @@ function create(){
     cursors = this.input.keyboard.createCursorKeys();
     keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
     
     //SOUNDS
     hadokenSoundSF2 = this.sound.add('hadokenSound');
 
     //TIMER
-    // timer = this.time.delayedCall(1000, function(){console.log('timer');}, [], this);
     timer = this.time;
 }
 
@@ -70,8 +72,6 @@ function update(){
 
     if(keySpace.isDown || keyEnter.isDown){
         punchButton.tint = 0xff0000;
-        //hadokenSoundSF2.play();
-        
     }else{
         punchButton.clearTint();
     }
@@ -80,7 +80,7 @@ function update(){
 }
 
 function hadokenDetection() {
-
+    
     bufferDownBool = downBool ? true : bufferDownBool;
     bufferDownForwardBool = downForwardBool ? true : bufferDownForwardBool;
     bufferForwardBool = forwardBool ? true : bufferForwardBool;
@@ -94,12 +94,12 @@ function hadokenDetection() {
             timer.delayedCall(timerDelay, function(){
                 bufferDownForwardBool = false;
             }, [], this);
-
+            
             if(bufferForwardBool){
                 timer.delayedCall(timerDelay, function(){
                     bufferForwardBool = false;
                 }, [], this);
-
+                
                 if(keySpace.isDown){
                     hadokenSoundSF2.play();
                 }
@@ -112,7 +112,7 @@ function gameDirections(){
     //----------
     //KEYBOARD
     //---------
-
+    
     //DOWN
     if(cursors.down.isDown){
         downBool = true;
@@ -126,7 +126,7 @@ function gameDirections(){
     }else{
         forwardBool = false;
     }
-
+    
     //DOWNFORWARD
     if(cursors.down.isDown && cursors.right.isDown){
         downBool = false;
@@ -136,30 +136,60 @@ function gameDirections(){
         downForwardBool = false;
     }
 
-    //------
-    //GAME
-    //-----
-
+    //ONE PRESS
+    //bools that are true once per press instead of
+    //every frame the button is pressed
     //DOWN
-    if(downBool){
-        arrowDown.tint = 0xff0000;
-        console.log('d');
-    }else{
-        arrowDown.tint = 000000;
+    if(!down1PressBool && downBool){
+            down1PressBool = true;
+            console.log('D');
+    }
+    if(down1PressBool && !downBool){
+            down1PressBool = false;
     }
 
     //FORWARD
-    if(forwardBool){
-        arrowForward.tint = 0xff0000;
-        console.log('f');
-    }else{
-        arrowForward.tint = 000000;
+    if(!forward1PressDBool && forwardBool){
+        forward1PressDBool = true;
+        console.log('F');
+    }
+    if(forward1PressDBool && !forwardBool){
+        forward1PressDBool = false;
     }
 
     //DOWNFORWARD
+    if(!downForward1PressBool && downForwardBool){
+        downForward1PressBool = true;
+        console.log('DF');
+    }
+    if(downForward1PressBool && !downForwardBool){
+        downForward1PressBool = false;
+    }
+    
+    //------
+    //GAME
+    //-----
+    
+    //DOWN
+    if(downBool){
+        arrowDown.tint = 0xff0000;
+        // console.log('d');
+    }else{
+        arrowDown.tint = 000000;
+    }
+    
+    //FORWARD
+    if(forwardBool){
+        arrowForward.tint = 0xff0000;
+        // console.log('f');
+    }else{
+        arrowForward.tint = 000000;
+    }
+    
+    //DOWNFORWARD
     if(downForwardBool){
         arrowDownForward.tint = 0xff0000;
-        console.log('df');
+        // console.log('df');
     }else{
         arrowDownForward.tint = 0x000000;
     }
