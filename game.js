@@ -32,9 +32,13 @@ let down1PressBool = false;
 let forward1PressDBool = false;
 let downForward1PressBool = false;
 
+let intermediateDownBool = false;
+let intermediateForwardBool = false;
+let intermediateDownForwardBool = false;
+
 let bufferDownBool = false;
-let bufferDownForwardBool = false;
 let bufferForwardBool = false;
+let bufferDownForwardBool = false;
 
 let timer;
 let timerDelay = 200;
@@ -76,6 +80,17 @@ function update(){
         punchButton.clearTint();
     }
 
+    if(down1PressBool){
+        console.log('D');
+    }
+    if(downForward1PressBool){
+        console.log('DF');
+    }
+    if(forward1PressDBool){
+        console.log('F');
+    }
+
+    // historyBar(this);
     hadokenDetection();
 }
 
@@ -118,6 +133,7 @@ function gameDirections(){
         downBool = true;
     }else{
         downBool = false;
+        intermediateDownBool = false;
     }
         
     //FORWARD
@@ -125,6 +141,7 @@ function gameDirections(){
         forwardBool = true;
     }else{
         forwardBool = false;
+        intermediateForwardBool = false;
     }
     
     //DOWNFORWARD
@@ -132,38 +149,49 @@ function gameDirections(){
         downBool = false;
         forwardBool = false;
         downForwardBool = true;
+
+        intermediateDownBool = false;
+        intermediateForwardBool = false
     }else{
         downForwardBool = false;
+        intermediateDownForwardBool = false;
     }
 
     //ONE PRESS
     //bools that are true once per press instead of
     //every frame the button is pressed
     //DOWN
-    if(!down1PressBool && downBool){
-            down1PressBool = true;
-            console.log('D');
+    if((down1PressBool && intermediateDownBool && downBool) ||
+       (down1PressBool && !intermediateDownBool && !downBool)){
+        down1PressBool = false;
+        // console.log('2');
     }
-    if(down1PressBool && !downBool){
-            down1PressBool = false;
+    if(!down1PressBool && !intermediateDownBool && downBool){
+        down1PressBool = true;
+        intermediateDownBool = true;
+        // console.log('D');
     }
-
+    
     //FORWARD
-    if(!forward1PressDBool && forwardBool){
-        forward1PressDBool = true;
-        console.log('F');
-    }
-    if(forward1PressDBool && !forwardBool){
+    if((forward1PressDBool && intermediateForwardBool && forwardBool) ||
+       (forward1PressDBool && !intermediateForwardBool && !forwardBool)){
         forward1PressDBool = false;
+    }
+    if(!forward1PressDBool && !intermediateForwardBool && forwardBool){
+        forward1PressDBool = true;
+        intermediateForwardBool = true;
+        // console.log('F')
     }
 
     //DOWNFORWARD
-    if(!downForward1PressBool && downForwardBool){
-        downForward1PressBool = true;
-        console.log('DF');
-    }
-    if(downForward1PressBool && !downForwardBool){
+    if((downForward1PressBool && intermediateDownForwardBool && downForwardBool) ||
+       (downForward1PressBool && !intermediateDownForwardBool && !downForwardBool)){
         downForward1PressBool = false;
+    }
+    if(!downForward1PressBool && !intermediateDownForwardBool && downForwardBool){
+        downForward1PressBool = true;
+        intermediateDownForwardBool = true;
+        // console.log('DF');
     }
     
     //------
