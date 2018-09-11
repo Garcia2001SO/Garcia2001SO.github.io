@@ -1,3 +1,5 @@
+//@ts-check
+
 let config = {
     type: Phaser.AUTO,
     width: 1200,
@@ -80,17 +82,7 @@ function update(){
         punchButton.clearTint();
     }
 
-    if(down1PressBool){
-        console.log('D');
-    }
-    if(downForward1PressBool){
-        console.log('DF');
-    }
-    if(forward1PressDBool){
-        console.log('F');
-    }
-
-    // historyBar(this);
+    historyBar(this);
     hadokenDetection();
 }
 
@@ -203,7 +195,7 @@ function gameDirections(){
         arrowDown.tint = 0xff0000;
         // console.log('d');
     }else{
-        arrowDown.tint = 000000;
+        arrowDown.tint = 0x000000;
     }
     
     //FORWARD
@@ -211,7 +203,7 @@ function gameDirections(){
         arrowForward.tint = 0xff0000;
         // console.log('f');
     }else{
-        arrowForward.tint = 000000;
+        arrowForward.tint = 0x000000;
     }
     
     //DOWNFORWARD
