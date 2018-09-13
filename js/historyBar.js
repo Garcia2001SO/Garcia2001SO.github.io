@@ -16,7 +16,7 @@ function historyBar(dis){
         });
     }
 
-    let positionX = 210 + 80 * directionHistory.length;
+    let positionX = config.width/2 - 200 + 80 * directionHistory.length;
     
     if(down1PressBool){
         directionHistory.push(['d', positionX, dis.add.image(positionX, 550, 'downForwardArrow').setAngle(45).setScale(0.5).setTintFill(0x005aed)]);
@@ -28,7 +28,7 @@ function historyBar(dis){
         directionHistory.push(['f',positionX, dis.add.image(positionX, 550, 'downForwardArrow').setAngle(315).setScale(0.5).setTintFill(0x005aed)]);
     }
 
-    if(down1PressBool || downForward1PressBool || forward1PressDBool){
-        console.log(directionHistory);
-    }
+    // if(down1PressBool || downForward1PressBool || forward1PressDBool){
+    //     console.log(directionHistory);
+    // }
 }
