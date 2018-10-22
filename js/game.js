@@ -32,24 +32,22 @@ let keys;
 let keySpace;
 let keyEnter;
 
-let downBool = false;
-let forwardBool = false;
-let downForwardBool = false;
-
-let down1PressBool = false;
-let forward1PressDBool = false;
-let downForward1PressBool = false;
-
-let intermediateDownBool = false;
-let intermediateForwardBool = false;
-let intermediateDownForwardBool = false;
+let myClock;
+let timer;
+let timer2;
+let timer3;
+let timerDelay = 200;
+let timeConfig = {
+    delay: 3000,
+    callback: function(){
+        bufferDownBool = downBool ? true : false;
+        console.log('L');
+    }
+}
 
 let bufferDownBool = false;
 let bufferForwardBool = false;
 let bufferDownForwardBool = false;
-
-let timer;
-let timerDelay = 200;
 
 function preload(){
     this.load.image('downForwardArrow', 'assets/diagonalRightArrowWhite.png');
@@ -98,7 +96,7 @@ function create(){
     hadokenSoundSF2 = this.sound.add('hadokenSound');
 
     //TIMER
-    timer = this.time;
+    myClock = this.time;
 }
 
 function update(){
@@ -114,136 +112,47 @@ function update(){
         barraTextObject.setText(barraString);
         timerDelay = 200 * barraPercent / 100;
     }
-
+    
     historyBar(this);
     hadokenDetection();
 }
 
-function hadokenDetection() {
-    
-    bufferDownBool = downBool ? true : bufferDownBool;
-    bufferDownForwardBool = downForwardBool ? true : bufferDownForwardBool;
-    bufferForwardBool = forwardBool ? true : bufferForwardBool;
+function hadokenDetection() {    
+    if(downBool){
+        bufferDownBool = true;
 
-    if(bufferDownBool){
-        timer.delayedCall(timerDelay, function(){
-            bufferDownBool = false;
-        }, [], this);
-
-        if(bufferDownForwardBool){
-            timer.delayedCall(timerDelay, function(){
-                bufferDownForwardBool = false;
-            }, [], this);
-            
-            if(bufferForwardBool){
-                timer.delayedCall(timerDelay, function(){
-                    bufferForwardBool = false;
-                }, [], this);
-                
-                if(keySpace.isDown){
-                    hadokenSoundSF2.play();
-                }
-            }
+        if(timer !== undefined){
+            timer.destroy();
         }
+        timer = myClock.delayedCall(timerDelay, function(){
+            bufferDownBool = downBool ? true : false;
+            console.log('L');
+        }, [], this);
     }
-}
 
-function gameDirections(){
-    //----------
-    //KEYBOARD
-    //---------
-    
-    //DOWN
-    if(cursors.down.isDown){
-        downBool = true;
-    }else{
-        downBool = false;
-        intermediateDownBool = false;
+    if(downForwardBool && bufferDownBool){
+        bufferDownForwardBool = true;
+
+        if(timer2 !== undefined){
+            timer2.destroy();
+        }
+        timer2 = myClock.delayedCall(timerDelay, function(){
+            bufferDownForwardBool = false;
+        }, [], this);
     }
         
-    //FORWARD
-    if(cursors.right.isDown){
-        forwardBool = true;
-    }else{
-        forwardBool = false;
-        intermediateForwardBool = false;
+    if(forwardBool && bufferDownForwardBool){
+        bufferForwardBool = true;
+        
+        if(timer3 !== undefined){
+            timer3.destroy();
+        }
+        timer3 = myClock.delayedCall(timerDelay, function(){
+            bufferForwardBool = false;
+        }, [], this);
+        
     }
-    
-    //DOWNFORWARD
-    if(cursors.down.isDown && cursors.right.isDown){
-        downBool = false;
-        forwardBool = false;
-        downForwardBool = true;
-
-        intermediateDownBool = false;
-        intermediateForwardBool = false
-    }else{
-        downForwardBool = false;
-        intermediateDownForwardBool = false;
-    }
-
-    //ONE PRESS
-    //bools that are true once per press instead of
-    //every frame the button is pressed
-    //DOWN
-    if((down1PressBool && intermediateDownBool && downBool) ||
-       (down1PressBool && !intermediateDownBool && !downBool)){
-        down1PressBool = false;
-        // console.log('2');
-    }
-    if(!down1PressBool && !intermediateDownBool && downBool){
-        down1PressBool = true;
-        intermediateDownBool = true;
-        // console.log('D');
-    }
-    
-    //FORWARD
-    if((forward1PressDBool && intermediateForwardBool && forwardBool) ||
-       (forward1PressDBool && !intermediateForwardBool && !forwardBool)){
-        forward1PressDBool = false;
-    }
-    if(!forward1PressDBool && !intermediateForwardBool && forwardBool){
-        forward1PressDBool = true;
-        intermediateForwardBool = true;
-        // console.log('F')
-    }
-
-    //DOWNFORWARD
-    if((downForward1PressBool && intermediateDownForwardBool && downForwardBool) ||
-       (downForward1PressBool && !intermediateDownForwardBool && !downForwardBool)){
-        downForward1PressBool = false;
-    }
-    if(!downForward1PressBool && !intermediateDownForwardBool && downForwardBool){
-        downForward1PressBool = true;
-        intermediateDownForwardBool = true;
-        // console.log('DF');
-    }
-    
-    //------
-    //GAME
-    //-----
-    
-    //DOWN
-    if(downBool){
-        arrowDown.setTintFill(0xff0000);
-        // console.log('d');
-    }else{
-        arrowDown.setTintFill(0x000000);
-    }
-    
-    //FORWARD
-    if(forwardBool){
-        arrowForward.setTintFill(0xff0000);
-        // console.log('f');
-    }else{
-        arrowForward.setTintFill(0x000000);
-    }
-    
-    //DOWNFORWARD
-    if(downForwardBool){
-        arrowDownForward.setTintFill(0xff0000);
-        // console.log('df');
-    }else{
-        arrowDownForward.setTintFill(0x000000);
+    if(keySpace.isDown && bufferForwardBool){
+        hadokenSoundSF2.play();
     }
 }
