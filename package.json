@@ -1,0 +1,19 @@
+{
+  "name": "hadoken-training",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Garcia2001SO/Hadoken-Training.git"
+  },
+  "author": "Garcia2001SO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Garcia2001SO/Hadoken-Training/issues"
+  },
+  "homepage": "https://github.com/Garcia2001SO/Hadoken-Training#readme"
+}

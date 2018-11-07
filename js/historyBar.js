@@ -1,34 +1,32 @@
 //@ts-check
+import { config } from './game.js';
 
 //This tracks and displays the most recent
 //directions pressed
 let directionHistory = [];
 
-function historyBar(dis){
-    
-    if(directionHistory.length >= 7){
-        directionHistory[0][2].destroy();
-        directionHistory.shift();
+export function historyBar(directions, dis){
+	let positionX = config.width/2 - 300 + 80 * directionHistory.length;
+	const positionY = 550;
+
+	for (const input in directions) {
+		if (directions.hasOwnProperty(input) &&
+		typeof directions[input] !== 'function') {
+			const dir = directions[input];
+
+			if(dir.singlePress){
+				directionHistory.push([dir.key, positionX, dis.add.image(positionX, positionY, 'downForwardArrow').setAngle(dir.spriteRotation).setScale(0.5).setTintFill(0x005aed)]);
+			}
+		}
+	}
+
+	if(directionHistory.length >= 9){
+		directionHistory[0][2].destroy();
+		directionHistory.shift();
         
-        directionHistory.forEach(dir => {
-            dir[1] -= 80;
-            dir[2].setX(dir[1]);
-        });
-    }
-
-    let positionX = config.width/2 - 200 + 80 * directionHistory.length;
-    
-    if(down1PressBool){
-        directionHistory.push(['d', positionX, dis.add.image(positionX, 550, 'downForwardArrow').setAngle(45).setScale(0.5).setTintFill(0x005aed)]);
-    }
-    if(downForward1PressBool){
-        directionHistory.push(['df', positionX, dis.add.image(positionX, 550, 'downForwardArrow').setScale(0.5).setTintFill(0x005aed)]);
-    }
-    if(forward1PressDBool){
-        directionHistory.push(['f',positionX, dis.add.image(positionX, 550, 'downForwardArrow').setAngle(315).setScale(0.5).setTintFill(0x005aed)]);
-    }
-
-    // if(down1PressBool || downForward1PressBool || forward1PressDBool){
-    //     console.log(directionHistory);
-    // }
+		directionHistory.forEach(dir => {
+			dir[1] -= 80;
+			dir[2].setX(dir[1]);
+		});
+	}
 }
