@@ -34,7 +34,7 @@ function inputFactory(dir, posX, posY, isDiagonal) {
 		break;
 	}
 	
-	const obj = {
+	return {
 		sprite: '',
 		key: dir,
 		spriteRotation,
@@ -47,8 +47,6 @@ function inputFactory(dir, posX, posY, isDiagonal) {
 		Y: config.height/2 + posY,
 		isDiagonal
 	};
-    
-	return obj;
 }
 
 //dir, posX, posY, isDiagonal

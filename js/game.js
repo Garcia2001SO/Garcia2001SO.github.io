@@ -2,8 +2,9 @@
 import { directionDetection } from './directionDetection.js';
 import { historyBar } from './historyBar.js';
 import { directions } from './directions.js';
+import { moveFactory } from './specialMoveFactory.js';
 
-export let config = {
+export const config = {
 	type: Phaser.AUTO,
 	width: 1300,
 	height: 700,
@@ -28,14 +29,18 @@ let punchButton;
 let messageInstructions;
 let soundRythim;
 let hadokenSoundSF2;
+let shoryukenSoundSF2;
+let tatsuSoundSF2;
 let keySpace;
 let keyEnter;
 
-let myClock;
-let timer;
-let timer2;
-let timer3;
-let timerDelay = 200;
+export let myClock;
+export let timerDelay = 200;
+
+//moves
+let hadouken;
+let tatsu;
+let shoryuken;
 
 function preload(){
 	this.load.image('downForwardArrow', 'assets/diagonalRightArrowWhite.png');
@@ -45,6 +50,8 @@ function preload(){
 	this.load.image('barra', 'assets/barra.png');
 
 	this.load.audio('hadokenSound', 'assets/hadouken.mp3');
+	this.load.audio('shoryukenSound', 'assets/shoryuken.mp3');
+	this.load.audio('tatsuSound', 'assets/tatsu.mp3');
 }
 
 function create(){
@@ -82,9 +89,19 @@ function create(){
     
 	//SOUNDS
 	hadokenSoundSF2 = this.sound.add('hadokenSound');
+	shoryukenSoundSF2 = this.sound.add('shoryukenSound');
+	tatsuSoundSF2 = this.sound.add('tatsuSound');
 
 	//TIMER
 	myClock = this.time;
+
+	//MOVES
+	let dirs = [directions.inputDown, directions.inputDownBack, directions.inputBack];
+	tatsu = moveFactory(dirs, myClock);
+	dirs = [directions.inputDown, directions.inputDownForward, directions.inputForward];
+	hadouken = moveFactory(dirs, myClock);
+	dirs = [directions.inputForward, directions.inputDown, directions.inputDownForward];
+	shoryuken = moveFactory(dirs, myClock);
 }
 
 function update(){
@@ -102,44 +119,8 @@ function update(){
 	}
     
 	historyBar(directions, this);
-	hadokenDetection();
-}
 
-function hadokenDetection() {    
-	if(directions.inputDown.isDown){
-		directions.inputDown.bufferBool = true;
-
-		if(timer !== undefined){
-			timer.destroy();
-		}
-		timer = myClock.delayedCall(timerDelay, function(){
-			directions.inputDown.bufferBool = directions.inputDown.isDown ? true : false;
-		}, [], this);
-	}
-
-	if(directions.inputDownForward.isDown && directions.inputDown.bufferBool){
-		directions.inputDownForward.bufferBool = true;
-
-		if(timer2 !== undefined){
-			timer2.destroy();
-		}
-		timer2 = myClock.delayedCall(timerDelay, function(){
-			directions.inputDownForward.bufferBool = false;
-		}, [], this);
-	}
-        
-	if(directions.inputForward.isDown && directions.inputDownForward.bufferBool){
-		directions.inputForward.bufferBool = true;
-        
-		if(timer3 !== undefined){
-			timer3.destroy();
-		}
-		timer3 = myClock.delayedCall(timerDelay, function(){
-			directions.inputForward.bufferBool = false;
-		}, [], this);
-        
-	}
-	if(keySpace.isDown && directions.inputForward.bufferBool){
-		hadokenSoundSF2.play();
-	}
+	hadouken.detection(keySpace, timerDelay, hadokenSoundSF2);
+	shoryuken.detection(keySpace, timerDelay, shoryukenSoundSF2);
+	tatsu.detection(keySpace, timerDelay, tatsuSoundSF2);
 }
